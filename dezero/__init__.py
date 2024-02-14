@@ -30,5 +30,7 @@ else:
     import dezero.functions
     import dezero.layers
     import dezero.models
+    import dezero.datasets
+    import dezero.utils
     
 setup_variable()
