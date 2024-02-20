@@ -7,6 +7,12 @@ Created on Thu Feb  8 12:00:45 2024
 
 import weakref
 import numpy as np
+def dummy_npwarn_decorator_factory():
+  def npwarn_decorator(x):
+    return x
+  return npwarn_decorator
+np._no_nep50_warning = getattr(np, '_no_nep50_warning', dummy_npwarn_decorator_factory)
+
 import contextlib
 import dezero
 
@@ -97,8 +103,7 @@ class Variable:
 
     def backward(self, retain_grad=False, create_graph=False):
         if self.grad is None:
-            #xp = dezero.cuda.get_array_module(self.data)
-            xp = np
+            xp = dezero.cuda.get_array_module(self.data)
             self.grad = Variable(xp.ones_like(self.data))
 
         funcs = []
@@ -252,8 +257,7 @@ class Mul(Function):
 
 
 def mul(x0, x1):
-    #x1 = as_array(x1, dezero.cuda.get_array_module(x0.data))
-    x1 = as_array(x1)
+    x1 = as_array(x1, dezero.cuda.get_array_module(x0.data))
     return Mul()(x0, x1)
 
 
@@ -285,14 +289,12 @@ class Sub(Function):
 
 
 def sub(x0, x1):
-    #x1 = as_array(x1, dezero.cuda.get_array_module(x0.data))
-    x1 = as_array(x1)
+    x1 = as_array(x1, dezero.cuda.get_array_module(x0.data))
     return Sub()(x0, x1)
 
 
 def rsub(x0, x1):
-    #x1 = as_array(x1, dezero.cuda.get_array_module(x0.data))
-    x1 = as_array(x1)
+    x1 = as_array(x1, dezero.cuda.get_array_module(x0.data))
     return Sub()(x1, x0)
 
 
@@ -312,8 +314,7 @@ class Div(Function):
 
 
 def div(x0, x1):
-    #x1 = as_array(x1, dezero.cuda.get_array_module(x0.data))
-    x1 = as_array(x1)
+    x1 = as_array(x1, dezero.cuda.get_array_module(x0.data))
     return Div()(x0, x1)
 
 
